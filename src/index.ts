@@ -217,7 +217,7 @@ class CardGenerator {
     private async setup(): Promise<void> {
         try {
             // Load SVG Template
-            const svgTemplate = await loadSVG("fake/assets/plain.svg");
+            const svgTemplate = await loadSVG("/assets/plain.svg");
             this.card = new Card(svgTemplate);
 
             // Clear container and inject SVG
