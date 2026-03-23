@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { reactive, onMounted, ref } from "vue";
+import { useSvgToJpeg } from '../composables/svg-to-jpeg';
 import { parseSVG } from "../composables/useSVG";
 import { Card } from "../classes/AdhaarCard";
-
+const { exportSvg, isExporting } = useSvgToJpeg();
 // Vite raw import
 import plainSvgRaw from "../assets/plain.svg?raw";
 
@@ -143,7 +144,7 @@ const handlePrint = () => {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
                             <!-- English Name -->
                             <div class="space-y-1.5">
-                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Full Name
+                                <label class="text-xs md:text-l font-bold text-slate-400 uppercase ml-1">Full Name
                                     (English)</label>
                                 <input v-model="form.nameEn" @input="syncCard" placeholder="Mohan Kumar" required
                                     class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm" />
@@ -151,23 +152,24 @@ const handlePrint = () => {
 
                             <!-- Hindi Name -->
                             <div class="space-y-1.5">
-                                <label class="text-[9px] font-bold text-slate-400 uppercase mr-1 text-right block">पूरा
+                                <label class="text-xs md:text-l font-bold text-slate-400 uppercase ml-1 block">पूरा
                                     नाम (हिंदी)</label>
-                                <input v-model="form.nameHi" @input="syncCard" dir="rtl" placeholder="मोहन कुमार"
-                                    required
-                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm text-right" />
+                                <input v-model="form.nameHi" @input="syncCard" placeholder="मोहन कुमार" required
+                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm" />
                             </div>
 
                             <!-- Date of Birth -->
                             <div class="space-y-1.5">
-                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Date of Birth</label>
+                                <label class="text-xs md:text-l font-bold text-slate-400 uppercase ml-1">Date of
+                                    Birth</label>
                                 <input v-model="form.dob" @change="syncCard" type="date" required
                                     class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm" />
                             </div>
 
                             <!-- Gender Selection -->
                             <div class="space-y-1.5">
-                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Gender / लिंग</label>
+                                <label class="text-xs md:text-l font-bold text-slate-400 uppercase ml-1">Gender /
+                                    लिंग</label>
                                 <select v-model="form.gender" @change="syncCard" required
                                     class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm appearance-none cursor-pointer">
                                     <option value="male">MALE / पुरूष</option>
@@ -191,15 +193,15 @@ const handlePrint = () => {
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <div class="space-y-1.5">
                                     <label
-                                        class="text-[9px] font-bold text-slate-400 uppercase ml-1 tracking-wider">12-Digit
-                                        UID</label>
+                                        class="text-xs md:text-l font-bold text-slate-400 uppercase ml-1 tracking-wider">Addhar
+                                        Card Number ( 12-Digit )</label>
                                     <input v-model="form.uid" @input="syncCard" maxlength="12" required minlength="12"
                                         placeholder="0000 0000 0000"
                                         class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-[0.2em] text-sm placeholder:text-slate-300">
                                 </div>
                                 <div class="space-y-1.5">
                                     <label
-                                        class="text-[9px] font-bold text-slate-400 uppercase ml-1 tracking-wider">16-Digit
+                                        class="text-xs md:text-l font-bold text-slate-400 uppercase ml-1 tracking-wider">16-Digit
                                         VID</label>
                                     <input v-model="form.vid" @input="syncCard" maxlength="16" required minlength="16"
                                         placeholder="0000 0000 0000 0000"
@@ -214,7 +216,7 @@ const handlePrint = () => {
                                     class="relative group/file p-4 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/30 dark:bg-slate-900/30 hover:bg-white dark:hover:bg-slate-800 hover:border-indigo-400 transition-all duration-200">
                                     <label class="flex flex-col items-center cursor-pointer">
                                         <span
-                                            class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase mb-2 tracking-widest group-hover/file:text-indigo-500">Photo
+                                            class="text-xs md:text-l font-black text-slate-400 dark:text-slate-500 uppercase mb-2 tracking-widest group-hover/file:text-indigo-500">Photo
                                             / फोटो</span>
                                         <input type="file" accept="image/*" @change="(e) => handleLiveFile(e, 'photo')"
                                             class="block w-full text-[10px] text-slate-400 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-indigo-50 dark:file:bg-indigo-950 file:text-indigo-600 dark:file:text-indigo-400 hover:file:bg-indigo-100">
@@ -226,7 +228,7 @@ const handlePrint = () => {
                                     class="relative group/file p-4 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/30 dark:bg-slate-900/30 hover:bg-white dark:hover:bg-slate-800 hover:border-indigo-400 transition-all duration-200">
                                     <label class="flex flex-col items-center cursor-pointer">
                                         <span
-                                            class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase mb-2 tracking-widest group-hover/file:text-indigo-500">QR
+                                            class="text-xs md:text-l font-black text-slate-400 dark:text-slate-500 uppercase mb-2 tracking-widest group-hover/file:text-indigo-500">QR
                                             Code / क्यूआर</span>
                                         <input type="file" accept="image/*" @change="(e) => handleLiveFile(e, 'qr')"
                                             required
@@ -248,7 +250,7 @@ const handlePrint = () => {
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
                             <!-- Front Issue Date -->
                             <div class="space-y-1.5">
-                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Front Issue
+                                <label class="text-xs md:text-l font-bold text-slate-400 uppercase ml-1">Front Issue
                                     Date</label>
                                 <input v-model="form.frontIssueDate" @change="syncCard" type="date"
                                     class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm" />
@@ -256,7 +258,7 @@ const handlePrint = () => {
 
                             <!-- Back Issue Date -->
                             <div class="space-y-1.5">
-                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Back Issue
+                                <label class="text-xs md:text-l font-bold text-slate-400 uppercase ml-1">Back Issue
                                     Date</label>
                                 <input v-model="form.backIssueDate" @change="syncCard" type="date"
                                     class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm" />
@@ -269,7 +271,7 @@ const handlePrint = () => {
                         class="group border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-5 md:p-6 transition-all duration-300 hover:border-indigo-100 dark:hover:border-indigo-900/30">
                         <!-- Modern Floating Legend -->
                         <legend
-                            class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                            class="px-4 text-xs md:text-l font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                             Address / पता
                         </legend>
 
@@ -277,7 +279,7 @@ const handlePrint = () => {
                             <!-- Address English -->
                             <div class="space-y-1.5">
                                 <label
-                                    class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase ml-1 tracking-wider">Permanent
+                                    class="text-xs md:text-l font-bold text-slate-400 dark:text-slate-500 uppercase ml-1 tracking-wider">Permanent
                                     Address (English)</label>
                                 <input v-model="form.addressEn1" @input="syncCard" type="text" required
                                     placeholder="Address Line 1"
@@ -293,7 +295,7 @@ const handlePrint = () => {
                             <!-- Address Hindi -->
                             <div class="space-y-1.5">
                                 <label
-                                    class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase mr-1 tracking-wider text-right block">स्थायी
+                                    class="text-xs md:text-l font-bold text-slate-400 dark:text-slate-500 uppercase ml-1 tracking-wider block">स्थायी
                                     पता (हिंदी)</label>
                                 <input v-model="form.addressHi1" @input="syncCard" type="text" required
                                     placeholder="स्थायी पता 1"
@@ -316,19 +318,65 @@ const handlePrint = () => {
                 </form>
             </section>
 
+
             <!-- 2. Preview Section -->
             <section
                 class="order-1 lg:order-2 flex flex-col items-center justify-start lg:sticky lg:top-10 h-fit print:static print:p-0">
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase mb-6 tracking-[0.4em] print:hidden">
-                    Live SVG Rendering
-                </h2>
-                <div id="container"
-                    class="w-full max-w-full aspect-[1.58/1] bg-white rounded-2xl shadow-2xl overflow-hidden flex items-center justify-center border dark:border-slate-800 print:shadow-none print:border-none print:m-0">
-                    <p class="text-slate-400 animate-pulse print:hidden">
-                        Loading Template...
-                    </p>
-                </div>
+
+                <!-- Native details starts open by default -->
+                <details open class="group w-full max-w-full select-none">
+
+                    <!-- Modernized Summary -->
+                    <summary class="flex cursor-pointer items-center justify-between px-1 mb-6 list-none print:hidden">
+                        <div class="flex items-center gap-2">
+                            <h2
+                                class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.4em]">
+                                Live SVG Rendering
+                            </h2>
+                            <button :disabled="isExporting" @click="exportSvg('container', 'a4', 0.9, 100, 'middle')"
+                                class="relative inline-flex items-center justify-center px-6 py-3 font-semibold text-white transition-all duration-200 bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed">
+                                <!-- Loading Spinner -->
+                                <svg v-if="isExporting" class="w-5 h-5 mr-3 animate-spin text-white"
+                                    xmlns="http://www.w3.org" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+
+                                <span>
+                                    {{ isExporting ? 'Generating A4 JPEG...' : 'Export to A4' }}
+                                </span>
+                            </button>
+                        </div>
+
+
+                        <!-- Icon rotates automatically when <details> is open -->
+                        <svg class="w-4 h-4 text-slate-300 transition-transform duration-300 group-open:rotate-180"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </summary>
+
+                    <!-- Main Rendering Card -->
+                    <div id="container"
+                        class="relative w-full aspect-[1.58/1] bg-white rounded-4xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-slate-100 dark:border-slate-800/50 flex items-center justify-center overflow-hidden transition-all duration-500 hover:shadow-[0_40px_80px_-16px_rgba(0,0,0,0.15)] print:shadow-none print:border-none print:m-0">
+
+                        <!-- Modern Minimal Loader -->
+                        <div class="flex flex-col items-center gap-3 animate-pulse print:hidden">
+                            <div class="w-1.5 h-1.5 bg-indigo-500 rounded-full shadow-[0_0_12px_rgba(99,102,241,0.8)]">
+                            </div>
+                            <p class="text-[10px] font-bold text-slate-400 tracking-[0.2em] uppercase opacity-60">
+                                Updating
+                            </p>
+                        </div>
+
+                    </div>
+                </details>
+
             </section>
+
         </div>
     </div>
 </template>
@@ -338,9 +386,6 @@ const handlePrint = () => {
 <style scoped>
 @reference "../style.css";
 
-.input-style {
-    @apply w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 transition-all text-sm placeholder:text-slate-400;
-}
 
 #container :deep(svg) {
     width: 100%;
@@ -362,5 +407,13 @@ const handlePrint = () => {
         width: 100% !important;
         height: auto !important;
     }
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary {
+    display: flex;
 }
 </style>
