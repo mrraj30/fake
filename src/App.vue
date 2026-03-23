@@ -5,4 +5,4 @@ import "./style.css";
 
 <template>
   <AdhaarCard />
-</template>z
+</template>
