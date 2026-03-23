@@ -13,7 +13,7 @@ interface CardInformation {
 async function generateQR(text: string) {
     try {
 
-        const dataUrl = await QRCode.toDataURL(text, {errorCorrectionLevel: 'H'});
+        const dataUrl = await QRCode.toDataURL(text, { errorCorrectionLevel: 'H' });
         return dataUrl
     } catch (err) {
         console.error(err);
@@ -96,7 +96,7 @@ export class Card {
             sub.textContent = `/ ${en.toUpperCase()}`;
             gender.appendChild(sub);
         }
-        this.cardInformation.virtualNumber = hi;
+        this.cardInformation.gender = hi;
     }
 
     updateAddress(hi: string[] = [], en: string[] = []) {
@@ -119,6 +119,12 @@ export class Card {
         const el = this.getEl<SVGElement>(selector);
         if (el) el.style.display = ishide ? "none" : "inline"
     }
+    hide(selector: string) {
+        this.setHide(selector, true)
+    }
+    show(selector: string) {
+        this.setHide(selector, false)
+    }
     toggleVersion(isOld = true) {
         const oldV = this.getEl<SVGElement>("#old_version_group");
         const newV = this.getEl<SVGElement>("#new_version_group");
@@ -136,7 +142,6 @@ export class Card {
                 if (qr_code_value) {
                     this.setHref("#image2033", qr_code_value)
                 }
-
             } catch (error) {
 
             }
@@ -152,21 +157,21 @@ export class Card {
     }
     updateDOB(d: string) {
         this.setTspan("#dob", this.formatDate(d));
-        this.cardInformation.dob = d;
+        this.cardInformation.dob = this.formatDate(d);
     }
     updateFrontDate(d: string) {
-        
         if (d) {
-            console.log(this.formatDate(d));
             this.setText("#tspan47", this.formatDate(d));
+            this.show("#front_issue_date")
         } else {
-            this.setHide("#front_issue_date");
+            this.hide("#front_issue_date");
         }
 
     }
     updateBackDate(d: string) {
         if (d) {
             this.setText("#tspan46", this.formatDate(d));
+            this.show("#back_issue_date")
         } else {
             this.setHide("#back_issue_date");
         }

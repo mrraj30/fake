@@ -1,224 +1,3 @@
-<template>
-    <div
-        class="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-10 transition-colors font-sans text-slate-900 dark:text-white">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <!-- 1. Form Section (Hidden on Print) -->
-            <section
-                class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-6 md:p-8 border border-slate-200 dark:border-slate-800 order-2 lg:order-1 print:hidden">
-                <header class="mb-8 border-b dark:border-slate-800 pb-4 flex justify-between items-center">
-                    <div>
-                        <h1 class="text-2xl font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tight">
-                            Identity Portal
-                        </h1>
-                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest leading-none mt-1">
-                            Live Management
-                        </p>
-                    </div>
-                    <button @click="toggleVersion" type="button"
-                        class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold uppercase hover:bg-indigo-50 dark:hover:bg-slate-700 transition">
-                        Version: {{ isOldVersion ? "Old" : "New" }}
-                    </button>
-                </header>
-
-                <form @submit.prevent="handlePrint" class="space-y-8">
-                    <!-- Personal Info -->
-                    <fieldset
-                        class="group border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-5 md:p-6 transition-all duration-300 hover:border-indigo-100 dark:hover:border-indigo-900/30">
-                        <legend
-                            class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                            Personal Profile / व्यक्तिगत विवरण
-                        </legend>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
-                            <!-- English Name -->
-                            <div class="space-y-1.5">
-                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Full Name
-                                    (English)</label>
-                                <input v-model="form.nameEn" @input="syncCard" placeholder="Mohan Kumar"
-                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm" />
-                            </div>
-
-                            <!-- Hindi Name -->
-                            <div class="space-y-1.5">
-                                <label class="text-[9px] font-bold text-slate-400 uppercase mr-1 text-right block">पूरा
-                                    नाम (हिंदी)</label>
-                                <input v-model="form.nameHi" @input="syncCard" dir="rtl" placeholder="मोहन कुमार"
-                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm text-right" />
-                            </div>
-
-                            <!-- Date of Birth -->
-                            <div class="space-y-1.5">
-                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Date of Birth</label>
-                                <input v-model="form.dob" @change="syncCard" type="date"
-                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm" />
-                            </div>
-
-                            <!-- Gender Selection -->
-                            <div class="space-y-1.5">
-                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Gender / लिंग</label>
-                                <select v-model="form.gender" @change="syncCard"
-                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm appearance-none cursor-pointer">
-                                    <option value="male">MALE / पुरूष</option>
-                                    <option value="female">FEMALE / महिला</option>
-                                </select>
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <!-- Identification -->
-                    <fieldset
-                        class="group border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-5 md:p-6 transition-all duration-300 hover:border-indigo-100 dark:hover:border-indigo-900/30">
-                        <!-- Modern Floating Legend -->
-                        <legend
-                            class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                            Identification / पहचान
-                        </legend>
-
-                        <div class="space-y-5 mt-2">
-                            <!-- UID & VID Inputs -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                <div class="space-y-1.5">
-                                    <label
-                                        class="text-[9px] font-bold text-slate-400 uppercase ml-1 tracking-wider">12-Digit
-                                        UID</label>
-                                    <input v-model="form.uid" @input="syncCard" maxlength="12"
-                                        placeholder="0000 0000 0000"
-                                        class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-[0.2em] text-sm placeholder:text-slate-300">
-                                </div>
-                                <div class="space-y-1.5">
-                                    <label
-                                        class="text-[9px] font-bold text-slate-400 uppercase ml-1 tracking-wider">16-Digit
-                                        VID</label>
-                                    <input v-model="form.vid" @input="syncCard" maxlength="16"
-                                        placeholder="0000 0000 0000 0000"
-                                        
-                                        class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
-                                </div>
-                            </div>
-
-                            <!-- File Upload Zones -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-                                <!-- Photo Upload -->
-                                <div
-                                    class="relative group/file p-4 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/30 dark:bg-slate-900/30 hover:bg-white dark:hover:bg-slate-800 hover:border-indigo-400 transition-all duration-200">
-                                    <label class="flex flex-col items-center cursor-pointer">
-                                        <span
-                                            class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase mb-2 tracking-widest group-hover/file:text-indigo-500">Photo
-                                            / फोटो</span>
-                                        <input type="file" accept="image/*" @change="(e) => handleLiveFile(e, 'photo')"
-                                            class="block w-full text-[10px] text-slate-400 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-indigo-50 dark:file:bg-indigo-950 file:text-indigo-600 dark:file:text-indigo-400 hover:file:bg-indigo-100">
-                                    </label>
-                                </div>
-
-                                <!-- QR Code Upload -->
-                                <div
-                                    class="relative group/file p-4 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/30 dark:bg-slate-900/30 hover:bg-white dark:hover:bg-slate-800 hover:border-indigo-400 transition-all duration-200">
-                                    <label class="flex flex-col items-center cursor-pointer">
-                                        <span
-                                            class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase mb-2 tracking-widest group-hover/file:text-indigo-500">QR
-                                            Code / क्यूआर</span>
-                                        <input type="file" accept="image/*" @change="(e) => handleLiveFile(e, 'qr')"
-                                            class="block w-full text-[10px] text-slate-400 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-indigo-50 dark:file:bg-indigo-950 file:text-indigo-600 dark:file:text-indigo-400 hover:file:bg-indigo-100">
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <!--  Card Date  -->
-                      <fieldset
-                        class="group border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-5 md:p-6 transition-all duration-300 hover:border-indigo-100 dark:hover:border-indigo-900/30">
-                        <legend
-                            class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                            Personal Profile / व्यक्तिगत विवरण
-                        </legend>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
-                            <!-- Front Issue Date -->
-                            <div class="space-y-1.5">
-                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Front Issue Date</label>
-                                <input v-model="form.frontIssueDate" @change="syncCard" type="date"
-                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm" />
-                            </div>
-
-                            <!-- Back Issue Date -->
-                            <div class="space-y-1.5">
-                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Back Issue Date</label>
-                                <input v-model="form.backIssueDate" @change="syncCard" type="date"
-                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm" />
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <!-- Address -->
-                    <fieldset
-                        class="group border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-5 md:p-6 transition-all duration-300 hover:border-indigo-100 dark:hover:border-indigo-900/30">
-                        <!-- Modern Floating Legend -->
-                        <legend
-                            class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                            Address / पता
-                        </legend>
-
-                        <div class="space-y-5 mt-2">
-                            <!-- Address English -->
-                            <div class="space-y-1.5">
-                                <label
-                                    class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase ml-1 tracking-wider">Permanent
-                                    Address (English)</label>
-                                <input v-model="form.addressEn1" @input="syncCard" type="text"
-                                    placeholder="Address Line 1"
-                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
-                                <input v-model="form.addressEn2" @input="syncCard" type="text"
-                                    placeholder="Address Line 2"
-                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
-                                <input v-model="form.addressEn3" @input="syncCard" type="text"
-                                    placeholder="Address Line 3"
-                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
-                            </div>
-
-                            <!-- Address Hindi -->
-                            <div class="space-y-1.5">
-                                <label
-                                    class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase mr-1 tracking-wider text-right block">स्थायी
-                                    पता (हिंदी)</label>
-                                <input v-model="form.addressHi1" @input="syncCard" type="text"
-                                    placeholder="स्थायी पता 1"
-                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
-                                <input v-model="form.addressHi2" @input="syncCard" type="text"
-                                    placeholder="स्थायी पता 2"
-                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
-                                <input v-model="form.addressHi3" @input="syncCard" type="text"
-                                    placeholder="स्थायी पता 3"
-                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
-
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <button type="submit"
-                        class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl shadow-xl transition active:scale-95 uppercase tracking-widest cursor-pointer">
-                        Print Identity Card
-                    </button>
-                </form>
-            </section>
-
-            <!-- 2. Preview Section -->
-            <section
-                class="order-1 lg:order-2 flex flex-col items-center justify-start lg:sticky lg:top-10 h-fit print:static print:p-0">
-                <h2 class="text-[10px] font-bold text-slate-400 uppercase mb-6 tracking-[0.4em] print:hidden">
-                    Live SVG Rendering
-                </h2>
-                <div id="container"
-                    class="w-full max-w-full aspect-[1.58/1] bg-white rounded-2xl shadow-2xl overflow-hidden flex items-center justify-center border dark:border-slate-800 print:shadow-none print:border-none print:m-0">
-                    <p class="text-slate-400 animate-pulse print:hidden">
-                        Loading Template...
-                    </p>
-                </div>
-            </section>
-        </div>
-    </div>
-</template>
-
 <script setup lang="ts">
 import { reactive, onMounted, ref } from "vue";
 import { parseSVG } from "../composables/useSVG";
@@ -250,7 +29,7 @@ const form: IdentityForm = reactive({
     dob: "",
     frontIssueDate: "",
     backIssueDate: "",
-    gender: "male", 
+    gender: "male",
     uid: "",
     vid: "",
     addressEn1: "",
@@ -288,10 +67,10 @@ const syncCard = () => {
     card.updateFrontDate(form.frontIssueDate);
     card.updateBackDate(form.backIssueDate);
     card.updateNumber(form.uid);
-    if(form.vid){
+    if (form.vid) {
         console.log("Yes");
     }
-    else{
+    else {
         card.toggleVersion()
     }
     card.updateVirtualNumber(form.vid);
@@ -304,6 +83,7 @@ const syncCard = () => {
         [form.addressHi1, form.addressHi2, form.addressHi3],
         [form.addressEn1, form.addressEn2, form.addressEn3],
     );
+    card.updateQRCode()
 };
 
 const handleLiveFile = (e: Event, type: "photo" | "qr") => {
@@ -329,6 +109,231 @@ const handlePrint = () => {
     window.print();
 };
 </script>
+<template>
+    <div
+        class="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 md:p-10 transition-colors font-sans text-slate-900 dark:text-white">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
+            <!-- 1. Form Section (Hidden on Print) -->
+            <section
+                class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-6 md:p-8 border border-slate-200 dark:border-slate-800 order-2 lg:order-1 print:hidden">
+                <header class="mb-8 border-b dark:border-slate-800 pb-4 flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tight">
+                            Identity Portal
+                        </h1>
+                        <p class="text-slate-500 text-xs font-medium uppercase tracking-widest leading-none mt-1">
+                            Live Management
+                        </p>
+                    </div>
+                    <button @click="toggleVersion" type="button"
+                        class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-[10px] font-bold uppercase hover:bg-indigo-50 dark:hover:bg-slate-700 transition">
+                        Version: {{ isOldVersion ? "Old" : "New" }}
+                    </button>
+                </header>
+
+                <form @submit.prevent="handlePrint" class="space-y-8">
+                    <!-- Personal Info -->
+                    <fieldset
+                        class="group border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-5 md:p-6 transition-all duration-300 hover:border-indigo-100 dark:hover:border-indigo-900/30">
+                        <legend
+                            class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                            Personal Profile / व्यक्तिगत विवरण
+                        </legend>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
+                            <!-- English Name -->
+                            <div class="space-y-1.5">
+                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Full Name
+                                    (English)</label>
+                                <input v-model="form.nameEn" @input="syncCard" placeholder="Mohan Kumar" required
+                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm" />
+                            </div>
+
+                            <!-- Hindi Name -->
+                            <div class="space-y-1.5">
+                                <label class="text-[9px] font-bold text-slate-400 uppercase mr-1 text-right block">पूरा
+                                    नाम (हिंदी)</label>
+                                <input v-model="form.nameHi" @input="syncCard" dir="rtl" placeholder="मोहन कुमार"
+                                    required
+                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm text-right" />
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div class="space-y-1.5">
+                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Date of Birth</label>
+                                <input v-model="form.dob" @change="syncCard" type="date" required
+                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm" />
+                            </div>
+
+                            <!-- Gender Selection -->
+                            <div class="space-y-1.5">
+                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Gender / लिंग</label>
+                                <select v-model="form.gender" @change="syncCard" required
+                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm appearance-none cursor-pointer">
+                                    <option value="male">MALE / पुरूष</option>
+                                    <option value="female">FEMALE / महिला</option>
+                                </select>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Identification -->
+                    <fieldset
+                        class="group border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-5 md:p-6 transition-all duration-300 hover:border-indigo-100 dark:hover:border-indigo-900/30">
+                        <!-- Modern Floating Legend -->
+                        <legend
+                            class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                            Identification / पहचान
+                        </legend>
+
+                        <div class="space-y-5 mt-2">
+                            <!-- UID & VID Inputs -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="space-y-1.5">
+                                    <label
+                                        class="text-[9px] font-bold text-slate-400 uppercase ml-1 tracking-wider">12-Digit
+                                        UID</label>
+                                    <input v-model="form.uid" @input="syncCard" maxlength="12" required minlength="12"
+                                        placeholder="0000 0000 0000"
+                                        class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-[0.2em] text-sm placeholder:text-slate-300">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label
+                                        class="text-[9px] font-bold text-slate-400 uppercase ml-1 tracking-wider">16-Digit
+                                        VID</label>
+                                    <input v-model="form.vid" @input="syncCard" maxlength="16" required minlength="16"
+                                        placeholder="0000 0000 0000 0000"
+                                        class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
+                                </div>
+                            </div>
+
+                            <!-- File Upload Zones -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+                                <!-- Photo Upload -->
+                                <div
+                                    class="relative group/file p-4 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/30 dark:bg-slate-900/30 hover:bg-white dark:hover:bg-slate-800 hover:border-indigo-400 transition-all duration-200">
+                                    <label class="flex flex-col items-center cursor-pointer">
+                                        <span
+                                            class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase mb-2 tracking-widest group-hover/file:text-indigo-500">Photo
+                                            / फोटो</span>
+                                        <input type="file" accept="image/*" @change="(e) => handleLiveFile(e, 'photo')"
+                                            class="block w-full text-[10px] text-slate-400 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-indigo-50 dark:file:bg-indigo-950 file:text-indigo-600 dark:file:text-indigo-400 hover:file:bg-indigo-100">
+                                    </label>
+                                </div>
+
+                                <!-- QR Code Upload -->
+                                <div
+                                    class="relative group/file p-4 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl bg-slate-50/30 dark:bg-slate-900/30 hover:bg-white dark:hover:bg-slate-800 hover:border-indigo-400 transition-all duration-200">
+                                    <label class="flex flex-col items-center cursor-pointer">
+                                        <span
+                                            class="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase mb-2 tracking-widest group-hover/file:text-indigo-500">QR
+                                            Code / क्यूआर</span>
+                                        <input type="file" accept="image/*" @change="(e) => handleLiveFile(e, 'qr')"
+                                            required
+                                            class="block w-full text-[10px] text-slate-400 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-indigo-50 dark:file:bg-indigo-950 file:text-indigo-600 dark:file:text-indigo-400 hover:file:bg-indigo-100">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!--  Card Date  -->
+                    <fieldset
+                        class="group border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-5 md:p-6 transition-all duration-300 hover:border-indigo-100 dark:hover:border-indigo-900/30">
+                        <legend
+                            class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                            Personal Profile / व्यक्तिगत विवरण
+                        </legend>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-2">
+                            <!-- Front Issue Date -->
+                            <div class="space-y-1.5">
+                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Front Issue
+                                    Date</label>
+                                <input v-model="form.frontIssueDate" @change="syncCard" type="date"
+                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm" />
+                            </div>
+
+                            <!-- Back Issue Date -->
+                            <div class="space-y-1.5">
+                                <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Back Issue
+                                    Date</label>
+                                <input v-model="form.backIssueDate" @change="syncCard" type="date"
+                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all text-sm" />
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Address -->
+                    <fieldset
+                        class="group border-2 border-slate-100 dark:border-slate-800 rounded-2xl p-5 md:p-6 transition-all duration-300 hover:border-indigo-100 dark:hover:border-indigo-900/30">
+                        <!-- Modern Floating Legend -->
+                        <legend
+                            class="px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                            Address / पता
+                        </legend>
+
+                        <div class="space-y-5 mt-2">
+                            <!-- Address English -->
+                            <div class="space-y-1.5">
+                                <label
+                                    class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase ml-1 tracking-wider">Permanent
+                                    Address (English)</label>
+                                <input v-model="form.addressEn1" @input="syncCard" type="text" required
+                                    placeholder="Address Line 1"
+                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
+                                <input v-model="form.addressEn2" @input="syncCard" type="text" required
+                                    placeholder="Address Line 2"
+                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
+                                <input v-model="form.addressEn3" @input="syncCard" type="text"
+                                    placeholder="Address Line 3"
+                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
+                            </div>
+
+                            <!-- Address Hindi -->
+                            <div class="space-y-1.5">
+                                <label
+                                    class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase mr-1 tracking-wider text-right block">स्थायी
+                                    पता (हिंदी)</label>
+                                <input v-model="form.addressHi1" @input="syncCard" type="text" required
+                                    placeholder="स्थायी पता 1"
+                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
+                                <input v-model="form.addressHi2" @input="syncCard" type="text" required
+                                    placeholder="स्थायी पता 2"
+                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
+                                <input v-model="form.addressHi3" @input="syncCard" type="text"
+                                    placeholder="स्थायी पता 3"
+                                    class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
+
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <button type="submit"
+                        class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl shadow-xl transition active:scale-95 uppercase tracking-widest cursor-pointer">
+                        Print Identity Card
+                    </button>
+                </form>
+            </section>
+
+            <!-- 2. Preview Section -->
+            <section
+                class="order-1 lg:order-2 flex flex-col items-center justify-start lg:sticky lg:top-10 h-fit print:static print:p-0">
+                <h2 class="text-[10px] font-bold text-slate-400 uppercase mb-6 tracking-[0.4em] print:hidden">
+                    Live SVG Rendering
+                </h2>
+                <div id="container"
+                    class="w-full max-w-full aspect-[1.58/1] bg-white rounded-2xl shadow-2xl overflow-hidden flex items-center justify-center border dark:border-slate-800 print:shadow-none print:border-none print:m-0">
+                    <p class="text-slate-400 animate-pulse print:hidden">
+                        Loading Template...
+                    </p>
+                </div>
+            </section>
+        </div>
+    </div>
+</template>
+
+
 
 <style scoped>
 @reference "../style.css";
