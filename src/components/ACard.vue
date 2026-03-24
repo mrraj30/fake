@@ -203,7 +203,7 @@ const handlePrint = () => {
                                     <label
                                         class="text-xs md:text-l font-bold text-slate-400 uppercase ml-1 tracking-wider">16-Digit
                                         VID</label>
-                                    <input v-model="form.vid" @input="syncCard" maxlength="16" required minlength="16"
+                                    <input v-model="form.vid" @input="syncCard" maxlength="16" minlength="16"
                                         placeholder="0000 0000 0000 0000"
                                         class="w-full p-3.5 bg-slate-50/50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all font-mono tracking-widest text-sm placeholder:text-slate-300">
                                 </div>
@@ -231,7 +231,7 @@ const handlePrint = () => {
                                             class="text-xs md:text-l font-black text-slate-400 dark:text-slate-500 uppercase mb-2 tracking-widest group-hover/file:text-indigo-500">QR
                                             Code / क्यूआर</span>
                                         <input type="file" accept="image/*" @change="(e) => handleLiveFile(e, 'qr')"
-                                            required
+                                            
                                             class="block w-full text-[10px] text-slate-400 file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-bold file:bg-indigo-50 dark:file:bg-indigo-950 file:text-indigo-600 dark:file:text-indigo-400 hover:file:bg-indigo-100">
                                     </label>
                                 </div>
